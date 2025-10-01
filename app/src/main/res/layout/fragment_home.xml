@@ -30,16 +30,41 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/gifImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/emptybox"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.40" />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/gifimgviewnointernet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/connectionless"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.40" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/offerbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/light_green"
         android:clickable="true"
-        android:visibility="invisible"
         android:contentDescription="Add Offers"
         android:src="@drawable/discount"
-        android:backgroundTint="@color/light_green"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/floatingActionButton2"
         app:layout_constraintEnd_toEndOf="@+id/floatingActionButton2"
         app:layout_constraintStart_toStartOf="@+id/floatingActionButton2" />
@@ -51,9 +76,38 @@
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/light_green"
         android:clickable="true"
-        android:visibility="invisible"
         android:src="@drawable/restaurant"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/offerbtn"
         app:layout_constraintEnd_toEndOf="@+id/offerbtn"
         app:layout_constraintStart_toStartOf="@+id/offerbtn" />
+
+    <TextView
+        android:id="@+id/txtviewnoproducts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Oops! \nNo Products Found"
+        android:textColor="@color/grey"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textFontWeight="700"
+        app:layout_constraintEnd_toEndOf="@+id/gifImageView"
+        app:layout_constraintStart_toStartOf="@+id/gifImageView"
+        app:layout_constraintTop_toBottomOf="@+id/gifImageView" />
+
+
+    <TextView
+        android:id="@+id/txtviewnoInternet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="No Internet Connection ! \n Please Check Your Connection"
+        android:textColor="@color/grey"
+        android:textFontWeight="700"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/gifImageView"
+        app:layout_constraintStart_toStartOf="@+id/gifImageView"
+        app:layout_constraintTop_toBottomOf="@+id/gifImageView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.example.grocerlypartners.repository
+package com.example.grocerlypartners.repository.remote
 
 import com.example.grocerlypartners.preferences.GrocerlyDataStore
 import com.example.grocerlypartners.utils.NetworkResult

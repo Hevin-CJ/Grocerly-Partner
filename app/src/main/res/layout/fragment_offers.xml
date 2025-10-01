@@ -20,4 +20,31 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5" />
 
+    <TextView
+        android:id="@+id/txtviewnooffers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Offers Found"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:visibility="invisible"
+        android:textAllCaps="true"
+        android:textFontWeight="600"
+        app:layout_constraintBottom_toBottomOf="@+id/rcviewoffers"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/rcviewoffers"
+        app:layout_constraintTop_toTopOf="@+id/rcviewoffers" />
+
+    <TextView
+        android:id="@+id/txtviewnoofferboost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:visibility="invisible"
+        android:text="Create enticing offers and boost sales"
+        app:layout_constraintEnd_toEndOf="@+id/txtviewnooffers"
+        app:layout_constraintStart_toStartOf="@+id/txtviewnooffers"
+        app:layout_constraintTop_toBottomOf="@+id/txtviewnooffers" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

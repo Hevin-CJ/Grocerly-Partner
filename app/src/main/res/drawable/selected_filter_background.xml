@@ -1,0 +1,8 @@
+<!-- Shape for the active indicator (e.g., underline or background) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+
+    <solid android:color="@color/white"/>
+    <stroke android:color="@color/lightgrey" android:width="2dp"/>
+
+
+</shape>

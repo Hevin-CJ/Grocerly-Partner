@@ -57,7 +57,7 @@
             android:id="@+id/action_updateProduct_to_products"
             app:destination="@id/products" />
         <argument
-            android:name="product"
+            android:name="updateProduct"
             app:argType="com.example.grocerlypartners.model.Product" />
     </fragment>
     <fragment

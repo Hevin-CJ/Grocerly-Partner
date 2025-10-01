@@ -5,28 +5,38 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.grocerlypartners.ConnectivityObserver
 import com.example.grocerlypartners.model.Product
-import com.example.grocerlypartners.repository.HomeRepoImpl
+import com.example.grocerlypartners.repository.remote.HomeRepoImpl
 import com.example.grocerlypartners.utils.NetworkResult
+import com.example.grocerlypartners.utils.NetworkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor (private val homeRepoImpl: HomeRepoImpl, application: Application):AndroidViewModel(application) {
+class HomeViewModel @Inject constructor (connectivityObserver: ConnectivityObserver,private val homeRepoImpl: HomeRepoImpl, application: Application):AndroidViewModel(application) {
 
     private val _product = MutableStateFlow<NetworkResult<List<Product>>>(NetworkResult.UnSpecified())
-    val product:LiveData<NetworkResult<List<Product>>> get() = _product.asLiveData()
+    val product: StateFlow<NetworkResult<List<Product>>> get() = _product.asStateFlow()
 
     private val _deleteProduct = MutableSharedFlow<NetworkResult<Product>>()
     val deleteProduct:LiveData<NetworkResult<Product>> get() = _deleteProduct.asLiveData()
 
-    val isReady = !_product.value.data.isNullOrEmpty()
+    private val _enableProduct = Channel<NetworkResult<Unit>>()
+    val enableProduct: Flow<NetworkResult<Unit>> get() = _enableProduct.receiveAsFlow()
+
+    val networkState:StateFlow<Boolean> = connectivityObserver.observe().stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L),true)
 
     init {
         fetchProductAddedByPartnerFromFirebase()
@@ -39,17 +49,24 @@ class HomeViewModel @Inject constructor (private val homeRepoImpl: HomeRepoImpl,
       }
     }
 
+    fun setProductEnable(product: Product,isEnabled: Boolean){
+        viewModelScope.launch {
+            setProductEnableDisable(product,isEnabled)
+        }
+    }
+
     private suspend fun fetchProductFromFirebase() {
-        _product.emit(NetworkResult.Loading())
+       homeRepoImpl.fetchDataFromFirebaseToHome().collectLatest {
+           _product.emit(it)
+       }
+    }
 
-        homeRepoImpl.fetchDataFromFirebaseToHome().data?.let {
-            _product.emit(NetworkResult.Success(it))
-        }
-
-        homeRepoImpl.fetchDataFromFirebaseToHome().message?.let {
-            _product.emit(NetworkResult.Error(it))
-        }
-
+    private suspend fun setProductEnableDisable(product: Product,isEnabled: Boolean){
+      if (NetworkUtils.isNetworkAvailable(getApplication())){
+          homeRepoImpl.setProductEnableFirebase(product,isEnabled)
+      }else{
+          _enableProduct.send(NetworkResult.Error("Enable Wifi or Mobile Data"))
+      }
     }
 
     fun deleteProduct(offer: Product) {
@@ -64,9 +81,5 @@ class HomeViewModel @Inject constructor (private val homeRepoImpl: HomeRepoImpl,
         _deleteProduct.emit(deleteProduct)
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        viewModelScope.cancel()
-    }
 
 }

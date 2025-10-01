@@ -5,8 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.grocerlypartners.model.OfferItem
-import com.example.grocerlypartners.repository.OfferRepoImpl
-import com.example.grocerlypartners.repository.UpdateOfferRepoImpl
+import com.example.grocerlypartners.repository.remote.UpdateOfferRepoImpl
 import com.example.grocerlypartners.utils.NetworkResult
 import com.example.grocerlypartners.utils.OfferState
 import com.example.grocerlypartners.utils.OfferValidation

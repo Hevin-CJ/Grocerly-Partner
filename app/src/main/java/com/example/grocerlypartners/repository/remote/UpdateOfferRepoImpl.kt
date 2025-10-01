@@ -1,4 +1,4 @@
-package com.example.grocerlypartners.repository
+package com.example.grocerlypartners.repository.remote
 
 import com.example.grocerlypartners.model.OfferItem
 import com.example.grocerlypartners.utils.Constants.OFFERS

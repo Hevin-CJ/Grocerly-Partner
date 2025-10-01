@@ -1,9 +1,5 @@
 package com.example.grocerlypartners.di
 
-import com.example.grocerlypartners.repository.UpdateProductRepoImpl
-import com.example.grocerlypartners.utils.Constants.PARTNERS
-import com.example.grocerlypartners.utils.Constants.PRODUCTS
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage

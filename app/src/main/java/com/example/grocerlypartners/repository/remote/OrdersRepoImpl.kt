@@ -1,8 +1,6 @@
-package com.example.grocerlypartners.repository
+package com.example.grocerlypartners.repository.remote
 
 import android.util.Log
-import androidx.compose.animation.core.snap
-import com.example.grocerlypartners.model.Address
 import com.example.grocerlypartners.model.CancellationInfo
 import com.example.grocerlypartners.model.CartProduct
 import com.example.grocerlypartners.model.Order
@@ -14,7 +12,6 @@ import com.example.grocerlypartners.utils.Constants.PARTNERS
 import com.example.grocerlypartners.utils.Constants.USERS
 import com.example.grocerlypartners.utils.NetworkResult
 import com.example.grocerlypartners.utils.OrderStatus
-import com.google.android.play.integrity.internal.ac
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -23,7 +20,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
-import okhttp3.internal.filterList
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -487,7 +483,7 @@ class OrdersRepoImpl @Inject constructor(private val auth: FirebaseAuth,private 
 
     fun CartProduct.toMap(): Map<String, Any?> {
         return mapOf(
-            "product" to product,
+            "product" to product.toMap(),
             "quantity" to quantity,
             "orderedTime" to orderedTime,
             "deliveryDate" to deliveryDate,
@@ -497,17 +493,21 @@ class OrdersRepoImpl @Inject constructor(private val auth: FirebaseAuth,private 
         )
     }
 
-    fun Product.toMap(): Map<String, Any?> {
-        return mapOf(
-            "productId" to productId,
-            "partnerId" to partnerId,
-            "image" to image,
-            "itemName" to itemName,
-            "itemPrice" to itemPrice,
-            "category" to category.name,
-            "itemRating" to itemRating,
-            "totalRating" to totalRating,
-            "isOrdered" to isOrdered
+    fun Product.toMap(): HashMap<String, Any?> {
+        return hashMapOf(
+            "productId" to this.productId,
+            "partnerId" to this.partnerId,
+            "image" to this.image,
+            "itemName" to this.itemName,
+            "itemPrice" to this.itemPrice,
+            "itemOriginalPrice" to this.itemOriginalPrice,
+            "category" to this.category.name,
+            "itemRating" to this.itemRating,
+            "totalRating" to this.totalRating,
+            "isEnabled" to this.isEnabled,
+            "maxQuantity" to this.maxQuantity,
+            "quantityType" to this.quantityType.name,
+            "packUpTime" to this.packUpTime.name
         )
     }
 

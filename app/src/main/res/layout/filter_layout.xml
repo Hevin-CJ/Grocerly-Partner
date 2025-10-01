@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@color/white"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:layout_editor_absoluteX="1dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/filter"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textFontWeight="700"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/view4"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/lightgrey"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+        <Button
+            android:id="@+id/monthbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="This Month"
+            app:layout_constraintEnd_toStartOf="@+id/weekbtn"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view4" />
+
+        <Button
+            android:id="@+id/weekbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This Week"
+            app:layout_constraintBottom_toBottomOf="@+id/monthbtn"
+            app:layout_constraintEnd_toStartOf="@+id/yesterdaybtn"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/monthbtn"
+            app:layout_constraintTop_toTopOf="@+id/monthbtn" />
+
+        <Button
+            android:id="@+id/yesterdaybtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/green"
+            android:text="Yesterday"
+            app:layout_constraintBottom_toBottomOf="@+id/weekbtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/weekbtn"
+            app:layout_constraintTop_toTopOf="@+id/weekbtn" />
+
+        <Button
+            android:id="@+id/todaybtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:enabled="false"
+            android:text="Today"
+            app:layout_constraintEnd_toEndOf="@+id/monthbtn"
+            app:layout_constraintStart_toStartOf="@+id/monthbtn"
+            app:layout_constraintTop_toBottomOf="@+id/monthbtn" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/customDatePicker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:text="Select Date Range .... "
+            android:textColor="@color/black"
+            android:textFontWeight="600"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/todaybtn"
+            app:layout_constraintEnd_toEndOf="@+id/yesterdaybtn"
+            app:layout_constraintStart_toStartOf="@+id/weekbtn"
+            app:layout_constraintTop_toTopOf="@+id/todaybtn"
+            app:strokeColor="@color/lightgrey"
+            app:strokeWidth="1dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/applybtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="Apply"
+            app:cornerRadius="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/customDatePicker" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/resetbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="Reset"
+            app:cornerRadius="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/applybtn"
+            app:layout_constraintEnd_toStartOf="@+id/applybtn"
+            app:layout_constraintTop_toTopOf="@+id/applybtn" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

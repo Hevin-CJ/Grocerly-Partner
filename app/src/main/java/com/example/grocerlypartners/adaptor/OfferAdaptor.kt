@@ -2,6 +2,7 @@ package com.example.grocerlypartners.adaptor
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -21,6 +22,7 @@ class OfferAdaptor:RecyclerView.Adapter<OfferAdaptor.OfferViewHolder>(){
         fun bindOffer(offerItem: OfferItem){
             binding.apply {
                 txtviewofferText.text = offerItem.descriptionText
+                txtviewofferText.setTextColor(offerItem.descriptionTextColor.toColorInt())
                 shopnowbtn.setText(offerItem.buttonText)
                 shopnowbtn.setBackgroundColor(offerItem.buttonBgColor.toColorInt())
                 shopnowbtn.setTextColor(offerItem.buttonTxtColor.toColorInt())

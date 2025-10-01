@@ -10,7 +10,6 @@
         </shape>
     </item>
 
-    <!-- Dropdown Icon -->
     <item
         android:drawable="@drawable/down"
         android:gravity="end|center_vertical"

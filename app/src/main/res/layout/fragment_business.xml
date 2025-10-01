@@ -51,13 +51,13 @@
                 android:layout_marginEnd="16dp"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView3"
-                app:layout_constraintEnd_toStartOf="@+id/textView11"
+                app:layout_constraintEnd_toStartOf="@+id/txtviewfilterbtn"
                 app:layout_constraintStart_toEndOf="@+id/imageView3"
                 app:layout_constraintTop_toTopOf="@+id/imageView3"
                 tools:text="TextView" />
 
             <TextView
-                android:id="@+id/textView11"
+                android:id="@+id/txtviewfilterbtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
@@ -72,6 +72,17 @@
 
 
     </com.google.android.material.card.MaterialCardView>
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/nodatagifimg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/loadingfiles"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
@@ -88,14 +99,18 @@
         app:layout_constraintTop_toBottomOf="@+id/materialCardView4" />
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/materialCardView6"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:backgroundTint="@color/white"
         app:cardCornerRadius="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/txtviewtiming">
+        app:layout_constraintTop_toBottomOf="@+id/txtviewtiming"
+        app:layout_constraintVertical_bias="0.2">
+
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -195,8 +210,8 @@
                 android:id="@+id/linearLayout2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="32dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="16dp"
                 android:gravity="center"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
@@ -408,6 +423,47 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_end="10dp" />
+
+    <TextView
+        android:id="@+id/txtviewOffline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Internet Connection"
+        android:textAllCaps="true"
+        android:textColor="@color/grey"
+        android:textFontWeight="500"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/materialCardView6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/materialCardView6" />
+
+    <TextView
+        android:id="@+id/txtviewOfflinesummary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="* sometimes result can be inaccurate or expired when offline"
+        android:textAllCaps="false"
+        android:textColor="@color/grey"
+        android:textFontWeight="500"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@+id/txtviewOffline"
+        app:layout_constraintStart_toStartOf="@+id/txtviewOffline"
+        app:layout_constraintTop_toBottomOf="@+id/txtviewOffline" />
+
+    <TextView
+        android:id="@+id/txtviewnodatafound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="true"
+        android:textSize="20sp"
+        android:visibility="invisible"
+        android:textColor="@color/grey"
+        android:textFontWeight="500"
+        android:text="No data found"
+        app:layout_constraintEnd_toEndOf="@+id/nodatagifimg"
+        app:layout_constraintStart_toStartOf="@+id/nodatagifimg"
+        app:layout_constraintTop_toBottomOf="@+id/nodatagifimg" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

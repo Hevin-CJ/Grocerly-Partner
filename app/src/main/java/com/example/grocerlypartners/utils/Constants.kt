@@ -9,5 +9,7 @@ object Constants {
     const val ORDERS = "orders"
     const val USERS = "users"
     const val PICK_IMAGE_REQUEST = 1
+    const val BUSINESS_TABLE="business_cache"
+    const val BUSINESS_DATABASE ="grocerly_partners_db"
 
 }

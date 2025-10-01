@@ -1,24 +1,19 @@
 package com.example.grocerlypartners.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.grocerlypartners.fragments.Orders
 import com.example.grocerlypartners.model.CartProduct
 import com.example.grocerlypartners.model.Order
-import com.example.grocerlypartners.repository.OrdersRepoImpl
-import com.example.grocerlypartners.utils.CancellationStatus
+import com.example.grocerlypartners.repository.remote.OrdersRepoImpl
 import com.example.grocerlypartners.utils.NetworkResult
 import com.example.grocerlypartners.utils.NetworkUtils
 import com.example.grocerlypartners.utils.OrderStatus
 import com.example.grocerlypartners.model.OrderUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge

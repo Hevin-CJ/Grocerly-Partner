@@ -1,42 +1,28 @@
 package com.example.grocerlypartners.viewmodel
 
 import android.app.Application
-import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.grocerlypartners.utils.Constants.PARTNERS
-import com.example.grocerlypartners.utils.Constants.PRODUCTS
 import com.example.grocerlypartners.utils.NetworkResult
 import com.example.grocerlypartners.model.Product
-import com.example.grocerlypartners.repository.AddProductRepoImpl
+import com.example.grocerlypartners.repository.remote.AddProductRepoImpl
 import com.example.grocerlypartners.utils.ProductCategory
 import com.example.grocerlypartners.utils.ProductValidation
 import com.example.grocerlypartners.utils.productValidationState
 import com.example.grocerlypartners.utils.validateProduct
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import java.io.File
-import java.io.FileOutputStream
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -140,7 +126,6 @@ class AddProductViewModel @Inject constructor(private val addProductRepoImpl: Ad
 
     override fun onCleared() {
         super.onCleared()
-        viewModelScope.cancel()
         _productValState.close()
     }
 

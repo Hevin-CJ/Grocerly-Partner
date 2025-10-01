@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,8 @@ import com.example.grocerlypartners.viewmodel.AddOfferViewModel
 import com.example.grocerlypartners.viewmodel.OfferViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -34,58 +37,49 @@ class Offers : Fragment() {
 
     private val offerAdaptor:OfferAdaptor by lazy { OfferAdaptor() }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        offerViewModel.getOfferFromFirebase()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         offers = FragmentOffersBinding.inflate(inflater,container,false)
+        loadingDialogue = LoadingDialogue(requireContext())
         return binding.root
 
     }
 
-    override fun onStart() {
-        super.onStart()
-        offerViewModel.getOfferFromFirebase()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadingDialogue = LoadingDialogue(requireContext())
         observeOffersFromFirebase()
         setDeleteOffer()
         observeOfferDeletion()
     }
 
     private fun observeOfferDeletion() {
-        offerViewModel.deletedOffer.observe(viewLifecycleOwner) { result ->
-            when (result) {
-                is NetworkResult.Error -> {
-                    loadingDialogue.dismiss()
-                }
+      viewLifecycleOwner.lifecycleScope.launch {
+          offerViewModel.deletedOffer.collectLatest{ result ->
+              when (result) {
+                  is NetworkResult.Error -> {
+                      loadingDialogue.dismiss()
+                  }
 
-                is NetworkResult.Loading -> {
-                    loadingDialogue.show()
-                }
+                  is NetworkResult.Loading -> {
+                      loadingDialogue.show()
+                  }
 
-                is NetworkResult.Success -> {
-                    loadingDialogue.dismiss()
-                    offerViewModel.getOfferFromFirebase()
-                    result.data?.let {
-                        showSnackBar(it)
-                    }
+                  is NetworkResult.Success -> {
+                      loadingDialogue.dismiss()
+                      result.data?.let {
+                          showSnackBar(it)
+                      }
+                  }
 
-                }
-
-                is NetworkResult.UnSpecified -> {
-                    loadingDialogue.dismiss()
-                }
-            }
-        }
+                  is NetworkResult.UnSpecified -> {
+                      loadingDialogue.dismiss()
+                  }
+              }
+          }
+      }
     }
 
     private fun showSnackBar(data: OfferItem) {
@@ -123,7 +117,8 @@ class Offers : Fragment() {
     }
 
     private fun observeOffersFromFirebase() {
-            offerViewModel.offerItems.observe(viewLifecycleOwner){result->
+        viewLifecycleOwner.lifecycleScope.launch {
+            offerViewModel.offerItems.collectLatest{result->
                 when(result){
                     is NetworkResult.Error -> {
                         loadingDialogue.dismiss()
@@ -134,8 +129,17 @@ class Offers : Fragment() {
                     }
                     is NetworkResult.Success ->{
                         loadingDialogue.dismiss()
-                        result.data?.let {
-                            setOfferAdaptor(it)
+                        if (result.data.isNullOrEmpty()) {
+                            binding.apply {
+                                txtviewnooffers.visibility = View.VISIBLE
+                                txtviewnoofferboost.visibility = View.VISIBLE
+                            }
+                        } else {
+                            binding.apply {
+                                txtviewnooffers.visibility = View.INVISIBLE
+                                txtviewnoofferboost.visibility = View.INVISIBLE
+                            }
+                            setOfferAdaptor(result.data)
                         }
                     }
                     is NetworkResult.UnSpecified -> {
@@ -143,7 +147,7 @@ class Offers : Fragment() {
                     }
                 }
             }
-
+        }
     }
 
     private fun setOfferAdaptor(it: List<OfferItem>) {

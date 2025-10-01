@@ -1,7 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -11,6 +9,7 @@ plugins {
     id("com.google.devtools.ksp")
     id ("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
+    kotlin("plugin.serialization") version "2.2.20"
 }
 
 android {
@@ -60,8 +59,13 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
-    //auth
+    //room
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 
+    //gson
+    implementation(libs.gson)
 
     //daggerhilt
     implementation(libs.hilt.android)
@@ -98,6 +102,9 @@ dependencies {
     implementation(libs.glide)
     ksp(libs.ksp.v4160)
 
+    //serialiazable
+    implementation(libs.kotlinx.serialization.json)
+
 
     //coil
     implementation(libs.coil.compose)
@@ -108,6 +115,9 @@ dependencies {
 
     //storage
     implementation(libs.firebase.storage.ktx)
+
+    //gitimageview
+    implementation(libs.android.gif.drawable)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

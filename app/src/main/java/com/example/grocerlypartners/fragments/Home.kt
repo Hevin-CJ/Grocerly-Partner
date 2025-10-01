@@ -10,11 +10,15 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.grocerlypartners.ConnectivityObserver
+import com.example.grocerlypartners.HomeAdaptorListener
 import com.example.grocerlypartners.R
 import com.example.grocerlypartners.adaptor.HomeAdaptor
 import com.example.grocerlypartners.databinding.FragmentHomeBinding
@@ -38,7 +42,7 @@ class Home : Fragment() {
     private val homeViewModel by viewModels<HomeViewModel>()
     private val addProductViewModel by viewModels<AddProductViewModel>()
 
-    private val homeAdaptor by lazy { HomeAdaptor() }
+    private lateinit var homeAdaptor : HomeAdaptor
 
     private lateinit var loadingDialogue: LoadingDialogue
 
@@ -48,10 +52,6 @@ class Home : Fragment() {
     private val toBottom:Animation by lazy { AnimationUtils.loadAnimation(requireContext(),R.anim.to_bottom_anim) }
     private var isVisible = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        homeViewModel.fetchProductAddedByPartnerFromFirebase()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,23 +62,59 @@ class Home : Fragment() {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-        homeViewModel.fetchProductAddedByPartnerFromFirebase()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setRcViewForHomeAdaptor()
         actionToAddProductAndShowOffers()
         observeProductFetchFromFirebase()
-        setRcViewForHomeAdaptor()
         observeDeletedProduct()
+        observeNetworkState()
     }
 
+
+    private fun observeNetworkState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeViewModel.networkState.collect { isEnabled ->
+                   if (isEnabled){
+                       binding.apply {
+                           txtviewnoInternet.visibility = View.INVISIBLE
+                           gifimgviewnointernet.visibility = View.INVISIBLE
+                           rcviewproducts.visibility = View.VISIBLE
+                       }
+                   }else{
+                       binding.apply {
+                           txtviewnoInternet.visibility = View.VISIBLE
+                           gifimgviewnointernet.visibility = View.VISIBLE
+                           txtviewnoproducts.visibility = View.INVISIBLE
+                           gifImageView.visibility = View.INVISIBLE
+                           rcviewproducts.visibility = View.INVISIBLE
+                       }
+                   }
+                }
+            }
+
+        }
+    }
+
+
+
     private fun setRcViewForHomeAdaptor() {
+
+        homeAdaptor = HomeAdaptor(object : HomeAdaptorListener {
+            override fun isProductEnabled(
+                product: Product,
+                isEnabled: Boolean,
+            ) {
+                homeViewModel.setProductEnable(product,isEnabled)
+            }
+
+        })
         binding.rcviewproducts.apply {
             adapter = homeAdaptor
-            layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
     }
 
@@ -95,7 +131,6 @@ class Home : Fragment() {
                 is NetworkResult.Success ->{
                     loadingDialogue.dismiss()
                     result.data?.let {
-                        homeViewModel.fetchProductAddedByPartnerFromFirebase()
                         showSnackBar(it)
                     }
                 }
@@ -145,32 +180,48 @@ class Home : Fragment() {
     }
 
     private fun observeProductFetchFromFirebase() {
-           homeViewModel.product.observe(viewLifecycleOwner){result->
-               when(result){
-                   is NetworkResult.Error -> {
-                       Toast.makeText(requireContext(),result.message, Toast.LENGTH_SHORT).show()
-                       loadingDialogue.dismiss()
+         viewLifecycleOwner.lifecycleScope.launch {
+             homeViewModel.product.collectLatest{result->
+                 when(result){
+                     is NetworkResult.Error -> {
+                         Toast.makeText(requireContext(),result.message, Toast.LENGTH_SHORT).show()
+                         loadingDialogue.dismiss()
 
-                   }
-                   is NetworkResult.Loading ->{
-                      loadingDialogue.show()
+                     }
+                     is NetworkResult.Loading ->{
+                         loadingDialogue.show()
 
-                   }
-                   is NetworkResult.Success -> {
-                       result.data?.let {
-                           homeAdaptor.setProduct(it )
-                           setSwipeToDelete(binding.rcviewproducts)
-                       }
-                       loadingDialogue.dismiss()
+                     }
+                     is NetworkResult.Success -> {
+                         loadingDialogue.dismiss()
 
-                   }
-                   is NetworkResult.UnSpecified -> {
-                       loadingDialogue.dismiss()
-                   }
-               }
+                        if (result.data.isNullOrEmpty()){
+                            binding.apply {
+                                txtviewnoproducts.visibility = View.VISIBLE
+                                gifImageView.visibility = View.VISIBLE
+                            }
+                        }else{
+                            binding.apply {
+                                txtviewnoproducts.visibility = View.GONE
+                                gifImageView.visibility = View.GONE
+                            }
+                        }
 
-       }
+                         result.data?.let {
+                             homeAdaptor.submitList(it)
+                             Log.d("iseeproducts",it.toString())
+                             setSwipeToDelete(binding.rcviewproducts)
+                         }
 
+                     }
+                     is NetworkResult.UnSpecified -> {
+                         loadingDialogue.dismiss()
+                     }
+                 }
+
+             }
+
+         }
     }
 
     private fun setVisibility(isenabled: Boolean) {
@@ -223,7 +274,6 @@ class Home : Fragment() {
         super.onDestroyView()
         home = null
     }
-
 
 
 

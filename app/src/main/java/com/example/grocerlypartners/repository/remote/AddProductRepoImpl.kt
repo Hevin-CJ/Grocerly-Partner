@@ -1,16 +1,16 @@
-package com.example.grocerlypartners.repository
+package com.example.grocerlypartners.repository.remote
 
 
 import android.net.Uri
-import android.util.Log
 import com.example.grocerlypartners.model.Product
 import com.example.grocerlypartners.utils.Constants.PARTNERS
 import com.example.grocerlypartners.utils.Constants.PRODUCTS
+import com.example.grocerlypartners.utils.Mappers.toMap
 import com.example.grocerlypartners.utils.NetworkResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -34,7 +34,7 @@ class AddProductRepoImpl @Inject constructor(private val db:FirebaseFirestore,pr
              val updatedProduct = product.copy(partnerId = userId)
 
              productRef.document(product.productId)
-                .set(updatedProduct)
+                .set(updatedProduct.toMap(), SetOptions.merge())
                 .await()
 
             NetworkResult.Success("Added ${product.itemName}")

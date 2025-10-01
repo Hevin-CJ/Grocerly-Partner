@@ -8,11 +8,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -22,24 +19,23 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.grocerlypartners.R
 import com.example.grocerlypartners.databinding.FragmentUpdateProductBinding
 import com.example.grocerlypartners.model.Product
+import com.example.grocerlypartners.utils.Constants.PARTNERS
 import com.example.grocerlypartners.utils.LoadingDialogue
 import com.example.grocerlypartners.utils.NetworkResult
+import com.example.grocerlypartners.utils.PackUp
 import com.example.grocerlypartners.utils.ProductCategory
 import com.example.grocerlypartners.utils.ProductValidation
-import com.example.grocerlypartners.utils.RegisterValidation
-import com.example.grocerlypartners.viewmodel.AddProductViewModel
+import com.example.grocerlypartners.utils.QuantityType
 import com.example.grocerlypartners.viewmodel.UpdateProductViewModel
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class UpdateProduct : Fragment() {
-    private var updateproduct:FragmentUpdateProductBinding?=null
-    private val binding get() = updateproduct!!
+    private var updateProduct:FragmentUpdateProductBinding?=null
+    private val binding get() = updateProduct!!
 
 
     private val updateNavArgs by navArgs<UpdateProductArgs>()
@@ -62,7 +58,7 @@ class UpdateProduct : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-       updateproduct = FragmentUpdateProductBinding.inflate(inflater,container,false)
+       updateProduct = FragmentUpdateProductBinding.inflate(inflater,container,false)
         loadingDialogue = LoadingDialogue(requireContext())
         return binding.root
     }
@@ -70,19 +66,21 @@ class UpdateProduct : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpCategoriesSpinner()
-        setDefaultDataToView()
         updateProduct()
         getImageFromStorage()
         observeUpdatingProduct()
         observeUpdatingProductValidation()
         observeImageUploadState()
+        setUpPackUpTime()
+        setUpQuantityType()
+        setDefaultDataToView()
     }
 
     private fun observeUpdatingProductValidation() {
        lifecycleScope.launch {
            updateProductViewModel.productValidationState.collect{state->
                if (state.product is ProductValidation.failure){
-                   binding.txtviewerror.text = state.product.message
+                  Toast.makeText(requireContext(),state.product.message, Toast.LENGTH_SHORT).show()
                }
            }
        }
@@ -132,7 +130,6 @@ class UpdateProduct : Fragment() {
                 }
                 is NetworkResult.Loading ->{
                     loadingDialogue.show()
-                    binding.txtviewerror.visibility = View.INVISIBLE
                 }
                 is NetworkResult.Success -> {
                    findNavController().navigate(R.id.action_updateProduct_to_products)
@@ -152,23 +149,48 @@ class UpdateProduct : Fragment() {
             updatebtn.setOnClickListener {
                 val itemName = edttextname.text.toString().trim()
                 val itemPrice = edttextprice.text.toString().trim().toIntOrNull()
-                val itemCategory = updateProductViewModel.parseStringIntoProduct(CategorySpinner.selectedItem.toString())
-                val itemImage  = selectedImage
-               val product = Product(updateNavArgs.product.productId,updateNavArgs.product.partnerId,itemImage,itemName,itemPrice,itemCategory)
+                val originalPrice = edttextpriceoriginal.text.toString().trim().toIntOrNull()
+                val maxQuantity = edttextmaxquantity.text.toString().trim().toIntOrNull()
+                val imageUri = selectedImage
+                val quantityTypeSelectedItems = getQuantityType(quantityTypeSpinner.selectedItem.toString())
+                val categorySelectedItem =  getCategoryType(CategorySpinner.selectedItem.toString())
+                val packingSelectedTime = getPackUpType(packupSpinner.selectedItem.toString())
+               val product = Product(productId = updateNavArgs.updateProduct.productId, partnerId = updateNavArgs.updateProduct.partnerId, image = imageUri, itemName = itemName, itemPrice = itemPrice, itemOriginalPrice = originalPrice, maxQuantity = maxQuantity, category = categorySelectedItem, quantityType = quantityTypeSelectedItems, packUpTime = packingSelectedTime)
                 updateProductViewModel.updateDataIntoFirebase(product)
 
             }
         }
     }
 
+    private fun getQuantityType(quantityType:String?): QuantityType{
+        return QuantityType.entries.find { it.displayName == quantityType } ?: QuantityType.selectQuantity
+    }
+
+
+    private fun getCategoryType(categoryType:String?): ProductCategory{
+        return ProductCategory.entries.find { it.displayName == categoryType } ?: ProductCategory.selectcatgory
+    }
+
+    private fun getPackUpType( packUpType: String?): PackUp{
+        return PackUp.entries.find { it.displayName == packUpType } ?:PackUp.selectTime
+    }
+
     private fun setDefaultDataToView() {
         binding.apply {
-            val product = updateNavArgs.product
+            val product = updateNavArgs.updateProduct
             edttextname.setText(product.itemName)
             edttextprice.setText(product.itemPrice.toString())
+            edttextpriceoriginal.setText(product.itemOriginalPrice.toString())
+            edttextmaxquantity.setText(product.maxQuantity.toString())
             Glide.with(imgviewitemimg.context).load(product.image).placeholder(R.drawable.weebly_image_sample).into(imgviewitemimg)
             selectedImage = product.image
-            CategorySpinner.setSelection(updateProductViewModel.parseProductIntoInt(product.category))
+            val categoryIndex = ProductCategory.entries.map { it.displayName }.indexOf(product.category.displayName)
+            CategorySpinner.setSelection(categoryIndex)
+
+            val qtyIndex = QuantityType.entries.map { it.displayName }.indexOf(product.quantityType.displayName)
+            quantityTypeSpinner.setSelection(qtyIndex)
+            packupSpinner.setSelection(product.packUpTime.ordinal)
+            Log.d("packuptime",product.packUpTime.ordinal.toString())
         }
     }
 
@@ -178,6 +200,21 @@ class UpdateProduct : Fragment() {
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categoryItems)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.CategorySpinner.adapter = adapter
+    }
+
+
+    private fun setUpPackUpTime(){
+        val packUpTime = PackUp.entries.map { it.displayName }
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, packUpTime)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.packupSpinner.adapter = adapter
+    }
+
+    private fun setUpQuantityType(){
+        val packUpTime = QuantityType.entries.map { it.displayName }
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, packUpTime)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.quantityTypeSpinner.adapter = adapter
     }
 
     private fun getImageFromStorage() {
@@ -192,7 +229,7 @@ class UpdateProduct : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        updateproduct=null
+        updateProduct=null
     }
 
 }
