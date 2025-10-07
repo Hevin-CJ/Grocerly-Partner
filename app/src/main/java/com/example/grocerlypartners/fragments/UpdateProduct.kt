@@ -151,11 +151,12 @@ class UpdateProduct : Fragment() {
                 val itemPrice = edttextprice.text.toString().trim().toIntOrNull()
                 val originalPrice = edttextpriceoriginal.text.toString().trim().toIntOrNull()
                 val maxQuantity = edttextmaxquantity.text.toString().trim().toIntOrNull()
+                val searchKeywords = generateKeywords(itemName)
                 val imageUri = selectedImage
                 val quantityTypeSelectedItems = getQuantityType(quantityTypeSpinner.selectedItem.toString())
                 val categorySelectedItem =  getCategoryType(CategorySpinner.selectedItem.toString())
                 val packingSelectedTime = getPackUpType(packupSpinner.selectedItem.toString())
-               val product = Product(productId = updateNavArgs.updateProduct.productId, partnerId = updateNavArgs.updateProduct.partnerId, image = imageUri, itemName = itemName, itemPrice = itemPrice, itemOriginalPrice = originalPrice, maxQuantity = maxQuantity, category = categorySelectedItem, quantityType = quantityTypeSelectedItems, packUpTime = packingSelectedTime)
+               val product = Product(productId = updateNavArgs.updateProduct.productId, partnerId = updateNavArgs.updateProduct.partnerId, image = imageUri, itemName = itemName, itemPrice = itemPrice, itemOriginalPrice = originalPrice, maxQuantity = maxQuantity, searchKeywords = searchKeywords, category = categorySelectedItem, quantityType = quantityTypeSelectedItems, packUpTime = packingSelectedTime)
                 updateProductViewModel.updateDataIntoFirebase(product)
 
             }
@@ -173,6 +174,22 @@ class UpdateProduct : Fragment() {
 
     private fun getPackUpType( packUpType: String?): PackUp{
         return PackUp.entries.find { it.displayName == packUpType } ?:PackUp.selectTime
+    }
+
+    private fun generateKeywords(itemName:String): List<String>{
+        val keywords = mutableListOf<String>()
+
+        val words = itemName.lowercase().split(" ").filter { it.isNotBlank() }
+        for (word in words){
+            keywords.add(word)
+
+            var prefix = ""
+            for(char in word){
+                prefix+=char
+                keywords.add(prefix)
+            }
+        }
+        return keywords.distinct().sortedBy { it.length }
     }
 
     private fun setDefaultDataToView() {

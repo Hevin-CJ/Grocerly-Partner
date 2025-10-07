@@ -17,8 +17,8 @@ package com.example.grocerlypartners.repository.remote
     import javax.inject.Inject
 
 
-    @ActivityRetainedScoped
-    class UpdateProductRepoImpl @Inject constructor(private val db:FirebaseFirestore, private val auth: FirebaseAuth,private val storage: FirebaseStorage) {
+@ActivityRetainedScoped
+class UpdateProductRepoImpl @Inject constructor(private val db:FirebaseFirestore, private val auth: FirebaseAuth,private val storage: FirebaseStorage) {
 
         private val userId = auth.currentUser?.uid.toString()
         private val updateProductRef =   db.collection(PARTNERS).document(userId).collection(PRODUCTS)
@@ -73,6 +73,7 @@ package com.example.grocerlypartners.repository.remote
                 "category" to this.category.name,
                 "itemRating" to this.itemRating,
                 "totalRating" to this.totalRating,
+                "searchKeywords" to this.searchKeywords,
                 "isEnabled" to this.isEnabled,
                 "maxQuantity" to this.maxQuantity,
                 "quantityType" to this.quantityType.name,
