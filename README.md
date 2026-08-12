@@ -15,10 +15,10 @@ Grocerly Partners is a native Android application designed for merchants and ven
 ## 🚀 Key Features
 
 * **Dashboard & Sales Analytics**: Real-time evaluation of active revenue, total orders, revenue loss, and cancellation metrics. Offers comparative trend analysis (growth/decline) against previous periods with filters for Today, Yesterday, Current Week, Current Month, and Custom Date Ranges.
-* **Offline-First Persistence**: Caches critical dashboard statistics in a local **Room Database** (`BusinessUiStateEntity`), allowing merchants to view performance metrics offline.
+* **Offline-First Persistence**: Caches critical dashboard statistics in a local **Room Database**, allowing merchants to view performance metrics offline.
 * **Catalog Management**: Add, update, and toggle the availability of products. Handles image uploads to **Firebase Storage**.
 * **Order Processing Pipeline**: Listen to incoming sub-orders containing store-specific items. Manage fulfillment through explicit states (`ACCEPTED`, `READY`, `SHIPPED`), trigger per-item cancellations with custom reasons, and send real-time update notifications to customers via **Firebase Cloud Messaging**.
-* **Coupon & Promotion Engine**: Create, update, and toggle active coupon rules (`PartnerCouponRule`) that dictate rewards given to customers (e.g., minimum spend thresholds, discount values, and coupon expiration intervals).
+* **Coupon & Promotion Engine**: Create, update, and toggle active coupon rules , that dictate rewards given to customers (e.g., minimum spend thresholds, discount values, and coupon expiration intervals).
 * **Robust Testing Framework**: Comprehensive unit tests written using **Mockito** and **Kotlinx-Coroutines-Test** to validate sales statistics calculations and date ranges.
 
 ---
