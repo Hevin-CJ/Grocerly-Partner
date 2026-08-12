@@ -7,6 +7,10 @@ Grocerly Partners is a native Android application designed for merchants and ven
 
 ---
 
+<img width="154" height="346" alt="home" src="https://github.com/user-attachments/assets/6d7775a7-7b2b-4844-b7da-096a682e27a5" />
+<img width="154" height="346" alt="dashhboard" src="https://github.com/user-attachments/assets/d4a83b5b-84b6-446e-9b2f-62b37ac17b1f" />
+<img width="154" height="346" alt="orders" src="https://github.com/user-attachments/assets/c29a58e4-8faa-446e-98d9-5c4d8f59b6e7" />
+<img width="154" height="346" alt="offers" src="https://github.com/user-attachments/assets/462c5999-ba12-4501-80df-24a1e7cdb786" />
 
 ## 🚀 Key Features
 
